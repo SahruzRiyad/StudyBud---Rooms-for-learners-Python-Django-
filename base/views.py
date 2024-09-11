@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
-from .models import Room, Topic, Message
-from .forms import RoomForm
+from .models import Room, Topic, Message, User
+from .forms import RoomForm, UserForm, CustomUserCreationForm
 from django.http import HttpResponse
 from django.db.models import Q
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login , logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -13,7 +11,6 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def loginPage(request):
-    page = 'login'
 
     if request.user.is_authenticated:
         return redirect('home')
@@ -21,12 +18,6 @@ def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username').lower()
         password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request, "Username does not exist.")
-            return render(request, 'base/login_register.html', {})
 
         user = authenticate(request, username=username, password=password)
 
@@ -36,21 +27,21 @@ def loginPage(request):
         else:
             messages.error(request, "Username or Password does not exist.")
 
-    context = {'page' : page} 
 
-    return render(request, 'base/login_register.html', context)
+    return render(request, 'base/login.html')
 
 def logoutUser(request):
     logout(request)
     return redirect('home')
 
 def registerUser(request):
-    form = UserCreationForm
+    form = CustomUserCreationForm()
     context = {'form' : form}
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
 
+        print(form)
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
@@ -59,9 +50,9 @@ def registerUser(request):
             return redirect('home')
 
         else:
-            messages.error(request, 'An error occured during registration.')
+            messages.error(request, str(form.errors))
 
-    return render(request, 'base/login_register.html', context)
+    return render(request, 'base/register.html', context)
 
 def userProfile(request,pk):
     user = User.objects.get(id=pk)
@@ -73,6 +64,24 @@ def userProfile(request,pk):
                'room_messages' : room_messages, 'topics' : topics}
 
     return render(request,'base/profile.html',context)
+
+@login_required(login_url='login')
+def updateUser(request):
+    user = request.user
+    form = UserForm(instance=user)
+
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+
+        if form.is_valid():
+            form.save()
+            return redirect ('user-profile',pk=user.id)
+        else:
+            messages.error(request, "Username/Email is not valid!!")
+
+    context = {'form' : form}
+
+    return render(request, 'base/update-user.html', context)
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''

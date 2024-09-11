@@ -67,3 +67,15 @@ if (photoInput)
 // Scroll to Bottom
 const conversationThread = document.querySelector(".room__box");
 if (conversationThread) conversationThread.scrollTop = conversationThread.scrollHeight;
+
+// Display message for n sec
+window.onload = function() {
+    var messageContainer = document.getElementById('message-container');
+    if (messageContainer) {
+        messageContainer.style.display = 'block';
+        setTimeout(function() {
+            messageContainer.style.display = 'none';
+        }, 5000);  // Display for 5 seconds
+    }
+};
+

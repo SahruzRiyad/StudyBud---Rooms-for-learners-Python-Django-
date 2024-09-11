@@ -255,7 +255,7 @@ a {
   gap: 1rem;
 }
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 768px) {
   .mobile-menu {
     display: none;
   }
@@ -475,8 +475,53 @@ a {
 }
 
 /*==============================
+=>  For Showing message
+================================*/
+
+.message-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 300px;
+  text-align: center;
+  display: none; /* Initially hidden, will be shown via JavaScript */
+}
+.alert.error {
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 5px;
+  color: white;
+  background-color: red; /* Error color */
+  font-weight: bold;
+}
+
+.alert.success {
+  background-color: green; /* Success color */
+}
+
+.alert.info {
+  background-color: blue; /* Info color */
+}
+
+.alert.warning {
+  background-color: orange; /* Warning color */
+}
+
+.alert {
+  background-color: bisque; /* Warning color */
+}
+
+/*==============================
 =>  Topics
 ================================*/
+
+.error-list {
+  color: red;  /* Change the color to red to make it noticeable */
+  list-style-type: none;  /* Remove bullet points */
+  padding: 0;
+}
 
 .form__group {
   margin-bottom: 2rem;
@@ -826,6 +871,7 @@ a {
 .auth .layout__boxHeader {
   text-align: center;
   justify-content: center;
+
 }
 
 .auth__action {
